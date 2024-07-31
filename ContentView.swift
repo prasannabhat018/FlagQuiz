@@ -16,6 +16,7 @@ struct ContentView: View {
     @State private var displayAlertMessage = ""
     @State private var isAlertDisplayed: Bool = false
     @State private var score = 0
+    private let totalGames = 8
     
     var body: some View {
         VStack {
@@ -66,8 +67,21 @@ struct ContentView: View {
                     Spacer()
                     Spacer()
                     
-                    Text("Score - \(score)")
-                        .font(.title2.weight(.bold))
+                    HStack {
+                        Spacer()
+                        Spacer()
+                        Text("Score - \(score)/\(totalGames)")
+                            .font(.title2.weight(.bold))
+                        Spacer()
+                        Button {
+                            reset()
+                        } label: {
+                            Image(systemName: "arrow.circlepath")
+                                .resizable()
+                                .frame(width: 25, height: 25)
+                        }
+                        Spacer()
+                    }
                     
                     Spacer()
                         
@@ -78,7 +92,7 @@ struct ContentView: View {
         }
         .fontDesign(.rounded)
         .alert(displayAlertMessage, isPresented: $isAlertDisplayed) {
-            Button("Restart", action: restartGame)
+            Button("Go to next", action: nextGame)
         }
     }
     
@@ -87,15 +101,22 @@ struct ContentView: View {
             displayAlertMessage = "Correct"
             score += 1
         } else {
-            displayAlertMessage = "Wrong"
+            displayAlertMessage = "Wrong, this is flag of \(flags[index].capitalized)"
         }
         isAlertDisplayed = true
     }
     
     // shuffle flags
-    private func restartGame() {
+    private func nextGame() {
         flags.shuffle()
         correctAnswer = Int.random(in: ContentView.flagsRange)
+    }
+    
+    // reset the game's value to 0
+    private func reset() {
+        displayAlertMessage = "Previous game score - \(score)/\(totalGames)"
+        isAlertDisplayed = true
+        score = 0
     }
 }
 
